@@ -1,0 +1,129 @@
+import { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+} from 'react-native';
+
+import { getIdeias, saveIdeias } from '../services/storage';
+
+export default function NovaIdeiaScreen({ navigation, route }) {
+  const { usuarioId } = route.params;
+
+  const [titulo, setTitulo] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [categoria, setCategoria] = useState('');
+
+  async function salvarIdeia() {
+    if (!titulo || !descricao || !categoria) {
+      Alert.alert('Atenção', 'Preencha todos os campos.');
+      return;
+    }
+
+    try {
+      const ideias = await getIdeias();
+
+      const novaIdeia = {
+        id: Date.now().toString(),
+        usuarioId,
+        titulo,
+        descricao,
+        categoria,
+      };
+
+      const novasIdeias = [...ideias, novaIdeia];
+
+      await saveIdeias(novasIdeias);
+
+      Alert.alert('Sucesso', 'Ideia salva com sucesso!', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível salvar a ideia.');
+    }
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Nova ideia 💡</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Título da ideia"
+        value={titulo}
+        onChangeText={setTitulo}
+      />
+
+      <TextInput
+        style={[styles.input, styles.textarea]}
+        placeholder="Descreva sua ideia..."
+        value={descricao}
+        onChangeText={setDescricao}
+        multiline
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Categoria"
+        value={categoria}
+        onChangeText={setCategoria}
+      />
+
+      <TouchableOpacity
+        style={styles.botao}
+        onPress={salvarIdeia}
+      >
+        <Text style={styles.textoBotao}>Salvar ideia</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: '#F8F5FC',
+    justifyContent: 'center',
+  },
+
+  titulo: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+
+  input: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    fontSize: 16,
+  },
+
+  textarea: {
+    height: 120,
+    textAlignVertical: 'top',
+  },
+
+  botao: {
+    backgroundColor: '#8B5CF6',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+
+  textoBotao: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
