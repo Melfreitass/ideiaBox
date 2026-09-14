@@ -4,11 +4,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
   StyleSheet,
 } from 'react-native';
 
 import { getIdeias, saveIdeias } from '../services/storage';
+import { mostrarAlerta } from '../services/alerta';
 
 export default function NovaIdeiaScreen({ navigation, route }) {
   const { usuarioId } = route.params;
@@ -19,7 +19,7 @@ export default function NovaIdeiaScreen({ navigation, route }) {
 
   async function salvarIdeia() {
     if (!titulo || !descricao || !categoria) {
-      Alert.alert('Atenção', 'Preencha todos os campos.');
+      mostrarAlerta('Atenção', 'Preencha todos os campos.');
       return;
     }
 
@@ -38,14 +38,11 @@ export default function NovaIdeiaScreen({ navigation, route }) {
 
       await saveIdeias(novasIdeias);
 
-      Alert.alert('Sucesso', 'Ideia salva com sucesso!', [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(),
-        },
-      ]);
+      mostrarAlerta('Sucesso', 'Ideia salva com sucesso!', () =>
+        navigation.goBack()
+      );
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível salvar a ideia.');
+      mostrarAlerta('Erro', 'Não foi possível salvar a ideia.');
     }
   }
 
@@ -75,10 +72,7 @@ export default function NovaIdeiaScreen({ navigation, route }) {
         onChangeText={setCategoria}
       />
 
-      <TouchableOpacity
-        style={styles.botao}
-        onPress={salvarIdeia}
-      >
+      <TouchableOpacity style={styles.botao} onPress={salvarIdeia}>
         <Text style={styles.textoBotao}>Salvar ideia</Text>
       </TouchableOpacity>
     </View>
@@ -92,14 +86,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F5FC',
     justifyContent: 'center',
   },
-
   titulo: {
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 30,
   },
-
   input: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
@@ -107,12 +99,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
   },
-
   textarea: {
     height: 120,
     textAlignVertical: 'top',
   },
-
   botao: {
     backgroundColor: '#8B5CF6',
     padding: 16,
@@ -120,7 +110,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-
   textoBotao: {
     color: '#FFFFFF',
     fontSize: 16,

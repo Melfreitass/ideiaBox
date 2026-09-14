@@ -2,11 +2,11 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Alert,
   StyleSheet,
 } from 'react-native';
 
 import { getIdeias, saveIdeias } from '../services/storage';
+import { mostrarAlerta, confirmarAcao } from '../services/alerta';
 
 export default function DetalhesIdeiaScreen({ navigation, route }) {
   const { ideia, usuarioId } = route.params;
@@ -19,20 +19,10 @@ export default function DetalhesIdeiaScreen({ navigation, route }) {
   }
 
   function excluirIdeia() {
-    Alert.alert(
+    confirmarAcao(
       'Excluir ideia',
       'Tem certeza que deseja excluir esta ideia?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: confirmarExclusao,
-        },
-      ]
+      confirmarExclusao
     );
   }
 
@@ -46,14 +36,14 @@ export default function DetalhesIdeiaScreen({ navigation, route }) {
 
       await saveIdeias(novasIdeias);
 
-      Alert.alert('Sucesso', 'Ideia excluída com sucesso!', [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(),
-        },
-      ]);
+      mostrarAlerta('Sucesso', 'Ideia excluída com sucesso!', () => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home', params: { usuarioId } }],
+        });
+      });
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível excluir a ideia.');
+      mostrarAlerta('Erro', 'Não foi possível excluir a ideia.');
     }
   }
 
@@ -69,26 +59,14 @@ export default function DetalhesIdeiaScreen({ navigation, route }) {
 
       <Text style={styles.label}>Descrição</Text>
 
-      <Text style={styles.descricao}>
-        {ideia.descricao}
-      </Text>
+      <Text style={styles.descricao}>{ideia.descricao}</Text>
 
-      <TouchableOpacity
-        style={styles.botaoEditar}
-        onPress={editarIdeia}
-      >
-        <Text style={styles.textoBotaoEditar}>
-          Editar ideia
-        </Text>
+      <TouchableOpacity style={styles.botaoEditar} onPress={editarIdeia}>
+        <Text style={styles.textoBotaoEditar}>Editar ideia</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.botaoExcluir}
-        onPress={excluirIdeia}
-      >
-        <Text style={styles.textoBotaoExcluir}>
-          Excluir ideia
-        </Text>
+      <TouchableOpacity style={styles.botaoExcluir} onPress={excluirIdeia}>
+        <Text style={styles.textoBotaoExcluir}>Excluir ideia</Text>
       </TouchableOpacity>
     </View>
   );

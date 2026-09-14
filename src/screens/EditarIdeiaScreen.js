@@ -4,11 +4,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
   StyleSheet,
 } from 'react-native';
 
 import { getIdeias, saveIdeias } from '../services/storage';
+import { mostrarAlerta } from '../services/alerta';
 
 export default function EditarIdeiaScreen({ navigation, route }) {
   const { ideia } = route.params;
@@ -19,7 +19,7 @@ export default function EditarIdeiaScreen({ navigation, route }) {
 
   async function salvarAlteracoes() {
     if (!titulo || !descricao || !categoria) {
-      Alert.alert('Atenção', 'Preencha todos os campos.');
+      mostrarAlerta('Atenção', 'Preencha todos os campos.');
       return;
     }
 
@@ -41,17 +41,11 @@ export default function EditarIdeiaScreen({ navigation, route }) {
 
       await saveIdeias(ideiasAtualizadas);
 
-      Alert.alert('Sucesso', 'Ideia atualizada com sucesso!', [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(),
-        },
-      ]);
-    } catch (error) {
-      Alert.alert(
-        'Erro',
-        'Não foi possível atualizar a ideia.'
+      mostrarAlerta('Sucesso', 'Ideia atualizada com sucesso!', () =>
+        navigation.goBack()
       );
+    } catch (error) {
+      mostrarAlerta('Erro', 'Não foi possível atualizar a ideia.');
     }
   }
 
@@ -81,13 +75,8 @@ export default function EditarIdeiaScreen({ navigation, route }) {
         onChangeText={setCategoria}
       />
 
-      <TouchableOpacity
-        style={styles.botao}
-        onPress={salvarAlteracoes}
-      >
-        <Text style={styles.textoBotao}>
-          Salvar alterações
-        </Text>
+      <TouchableOpacity style={styles.botao} onPress={salvarAlteracoes}>
+        <Text style={styles.textoBotao}>Salvar alterações</Text>
       </TouchableOpacity>
     </View>
   );
