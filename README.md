@@ -8,7 +8,8 @@ O projeto foi desenvolvido como atividade prática de desenvolvimento mobile, ut
 
 ## 👩‍💻 Integrante
 
-- Melissa Gabrielly de Freitas
+- Melissa Freita
+- Victor Bohem
 
 ---
 
